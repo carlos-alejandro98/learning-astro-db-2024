@@ -1,0 +1,33 @@
+---
+import { Category } from "astro:db";
+import { eq } from "astro:db";
+import { db, User, ToDo } from "astro:db";
+
+const users = await db.select().from(User);
+const toDo = await db
+	.select()
+	.from(ToDo)
+	.innerJoin(User, eq(ToDo.user_id, User.id))
+	.innerJoin(Category, eq(ToDo.category_id, Category.id));
+	//.where(eq(User.username, "user"));
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body>
+		<h1>Usuarios</h1>
+		<ul>
+			{
+				toDo.map((todo) => (
+					<li>{`Titulo: ${todo.ToDo.title}, Categoria: ${todo.Category.name}, Creador: ${todo.User.username}`}</li>
+				))
+			}
+		</ul>
+	</body>
+</html>
